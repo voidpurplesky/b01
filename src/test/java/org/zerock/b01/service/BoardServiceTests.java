@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.zerock.b01.dto.BoardDTO;
+import org.zerock.b01.dto.PageRequestDTO;
+import org.zerock.b01.dto.PageResponseDTO;
 
 @SpringBootTest
 @Log4j2
@@ -29,16 +31,47 @@ public class BoardServiceTests {
         log.info("bno:" + bno);
     }
 
+    @Test
+    public void read() {
+        BoardDTO boardDTO = boardService.readOne(407L);
+        log.info(boardDTO);
+    }
     // 수정 p467
     @Test
     public void modify() {
         BoardDTO boardDTO = BoardDTO.builder()
-                .bno(3L)
+                .bno(407L)
                 .title("MODIFY TITLE")
                 .content("MODIFY CONTENT")
                 .build();
         boardService.modify(boardDTO);
+
+        boardDTO = boardService.readOne(407L);
+        log.info(boardDTO);
     }
 
     // 삭제
+
+    @Test
+    public void ceil() {
+        int total = 101;
+        int size = 10;
+        log.info(Math.ceil((total/(double)size))); // 10.1 > 11.0 올림
+    }
+
+    @Test
+    public void list() {
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .type("tcw")
+                .keyword("1")
+                .page(1)
+                .size(10)
+                .build();
+
+        PageResponseDTO<BoardDTO> responseDTO = boardService.list(pageRequestDTO);
+        log.info(responseDTO);
+    }
+    //PageResponseDTO(page=1, size=10, total=403, start=1, end=10, prev=false, next=true, dtoList=[BoardDTO(bno=407,
+
+
 }
