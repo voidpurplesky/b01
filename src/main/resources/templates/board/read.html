@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/basic}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body><!--body start-->
+<div layout:fragment="content">
+  <div class="row mt-3">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">Board Read</div>
+        <div class="card-body">
+          <div class="input-group mb-3">
+            <span class="input-group-text">Bno</span>
+            <input type="text" class="form-control" th:value="${dto.bno}" readonly>
+          </div>
+        </div><!-- end card body-->
+      </div>
+    </div>
+  </div>
+</div><!-- end layout-->
+</body><!--body end-->
+</html>
