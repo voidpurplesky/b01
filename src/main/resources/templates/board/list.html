@@ -26,10 +26,10 @@
             </thead>
             <tbody>
               <tr th:each="dto:${responseDTO.dtoList}">
-                <th scope="row">[[${dto.jno}]]</th>
-                <td>[[${dto.company}]]</td>
-                <td>[[${dto.name}]]</td>
-                <td>[[${#temporals.format(dto.endDate, 'yyyy-MM-dd')}]]</td>
+                <th scope="row">[[${dto.bno}]]</th>
+                <td>[[${dto.title}]]</td>
+                <td>[[${dto.writer}]]</td>
+                <td>[[${#temporals.format(dto.regDate, 'yyyy-MM-dd')}]]</td>
               </tr>
             </tbody>
           </table>
