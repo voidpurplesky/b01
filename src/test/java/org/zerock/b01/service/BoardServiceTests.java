@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.zerock.b01.dto.BoardDTO;
 import org.zerock.b01.dto.PageRequestDTO;
 import org.zerock.b01.dto.PageResponseDTO;
+import org.zerock.b01.repository.ReplyRepository;
 
 @SpringBootTest
 @Log4j2
@@ -17,6 +18,8 @@ public class BoardServiceTests {
 
     @Autowired
     private BoardService boardService;
+
+
 
     // 등록 p464
     @Test

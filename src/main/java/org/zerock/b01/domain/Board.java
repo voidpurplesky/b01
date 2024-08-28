@@ -38,7 +38,10 @@ public class Board extends BaseEntity {
     }
 
     // p617
-    @OneToMany(mappedBy = "board", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    // orphanRemoval = true 하위 엔티티의 참조가 더이상 없는 상태가 되면 삭제
+    @OneToMany(mappedBy = "board", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY
+            ,orphanRemoval = true
+    )
     @Builder.Default
     private Set<BoardImage> imageSet = new HashSet<>();
 

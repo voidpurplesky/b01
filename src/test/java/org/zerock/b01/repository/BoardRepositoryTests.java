@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import org.zerock.b01.domain.Board;
 import org.zerock.b01.domain.BoardImage;
@@ -32,6 +33,9 @@ public class BoardRepositoryTests {
 
     @Autowired
     private BoardRepository boardRepository;
+
+    @Autowired
+    private ReplyRepository replyRepository;
 
     // insert 기능 테스트 p439
     @Test
@@ -168,18 +172,16 @@ Hibernate:
 
      */
 
+    @Transactional
     @Test
     public void addImages() {
 
-        Long bno = 410L;
+        Long bno = 411L;
         Optional<Board> result = boardRepository.findById(bno);
 
         Board board = result.orElseThrow();
         board.addImage(UUID.randomUUID().toString(), "file.jpg");
         boardRepository.save(board);
-
-
-
     }
 
     @Test
@@ -190,7 +192,6 @@ Hibernate:
                 .writer("tester")
                 .build();
 
-
         board.addImage(UUID.randomUUID().toString(), "file.jpg");
 
         boardRepository.save(board);
@@ -198,7 +199,7 @@ Hibernate:
 
     @Test
     public void readWithImages() {
-        Optional<Board> result = boardRepository.findByIdWithImages(414L);
+        Optional<Board> result = boardRepository.findByIdWithImages(411L);
         Board board = result.orElseThrow();
         log.info(board);
         log.info("-----------------------");
@@ -237,5 +238,108 @@ imageSet=[
 2024-08-20T17:50:31.758+09:00  INFO 11432 --- [b01] [           main] o.z.b01.repository.BoardRepositoryTests  : BoardImage(uuid=f3cc5401-16d5-45b0-a9bb-007049feae99, fileName=file0.jpg, ord=0)
 2024-08-20T17:50:31.758+09:00  INFO 11432 --- [b01] [           main] o.z.b01.repository.BoardRepositoryTests  : BoardImage(uuid=f6f862b2-e131-4649-b375-4ff3c5f910dc, fileName=file2.jpg, ord=2)
  */
+    }
+
+    @Transactional //org.springframework.transaction.annotation.Transactional;
+    @Commit // org.springframework.test.annotation
+    @Test
+    public void modifyImages() {
+        Optional<Board> result = boardRepository.findByIdWithImages(414L);
+        Board board = result.orElseThrow();
+
+        board.clearImages();
+
+        for (int i = 0; i < 2; i++) {
+            board.addImage(UUID.randomUUID().toString(), "updatefile"+i+".jpg");
+        }
+        boardRepository.save(board);
+    }
+
+    // 게시물과 첨부파일 삭제 p626
+    @Test
+    @Transactional
+    @Commit
+    public void removeWithReplies() {
+        Long bno = 416L;
+
+        replyRepository.deleteByBoard_Bno(bno);
+        boardRepository.deleteById(bno);
+    }
+/*
+sel reply > sel board > board_image
+del board_img 2 > board
+
+Hibernate:
+    select
+        r1_0.rno,
+        r1_0.board_bno,
+        r1_0.moddate,
+        r1_0.regdate,
+        r1_0.reply_text,
+        r1_0.replyer
+    from
+        reply r1_0
+    where
+        r1_0.board_bno=?
+Hibernate:
+    select
+        b1_0.bno,
+        b1_0.content,
+        b1_0.moddate,
+        b1_0.regdate,
+        b1_0.title,
+        b1_0.writer
+    from
+        board b1_0
+    where
+        b1_0.bno=?
+Hibernate:
+    select
+        is1_0.board_bno,
+        is1_0.uuid,
+        is1_0.file_name,
+        is1_0.ord
+    from
+        board_image is1_0
+    where
+        is1_0.board_bno=?
+Hibernate:
+    delete
+    from
+        board_image
+    where
+        uuid=?
+Hibernate:
+    delete
+    from
+        board_image
+    where
+        uuid=?
+Hibernate:
+    delete
+    from
+        board
+    where
+        bno=?
+ */
+
+    @Test
+    public void insertAll() {
+        for (int i = 1; i <= 100; i++) {
+            Board board = Board.builder()
+                    .title("Title.."+i)
+                    .content("Content.."+i)
+                    .writer("writer.."+i)
+                    .build();
+            for (int j = 0; j < 3; j++) {
+                if (i % 5 == 0) {
+                    continue;
+                }
+                board.addImage(UUID.randomUUID().toString(), i+"file"+j+".jpg");
+            }
+            boardRepository.save(board);
+        }
+
+
     }
 }

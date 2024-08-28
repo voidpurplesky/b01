@@ -11,4 +11,6 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
     // 특정 게시물의 댓글 조회와 인덱스 p537
     @Query("select r from Reply r where r.board.bno = :bno")
     Page<Reply> listOfBoard(@Param("bno") Long bno, Pageable pageable);
+
+    void deleteByBoard_Bno(Long bno);
 }
